@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scholar &middot; Dashboard</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Shared design system: palette + type. IDENTICAL to login.html. -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              canvas: "#eef2f8",
+              surface: "#ffffff",
+              primary: {
+                DEFAULT: "#0d9488",
+                50: "#f0fdfa",
+                100: "#ccfbf1",
+                200: "#99f6e4",
+                300: "#5eead4",
+                400: "#2dd4bf",
+                500: "#14b8a6",
+                600: "#0d9488",
+                700: "#0f766e",
+                800: "#115e59",
+                900: "#134e4a",
+              },
+              accent: "#f59e0b",
+              ink: "#0f172a",
+              muted: "#64748b",
+              danger: "#e11d48",
+              success: "#16a34a",
+            },
+            fontFamily: {
+              display: [
+                "Plus Jakarta Sans",
+                "ui-sans-serif",
+                "system-ui",
+                "sans-serif",
+              ],
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 16px 40px -14px rgba(13,148,136,0.55)",
+              card: "0 10px 40px -14px rgba(15,23,42,0.16)",
+              soft: "0 1px 2px rgba(15,23,42,0.06), 0 10px 30px -18px rgba(15,23,42,0.25)",
+            },
+            keyframes: {
+              drift: {
+                "0%,100%": { transform: "translate(0,0) scale(1)" },
+                "50%": { transform: "translate(26px,-18px) scale(1.06)" },
+              },
+              "fade-up": {
+                "0%": { opacity: 0, transform: "translateY(16px)" },
+                "100%": { opacity: 1, transform: "translateY(0)" },
+              },
+              spinp: { to: { transform: "rotate(360deg)" } },
+            },
+            animation: {
+              drift: "drift 16s ease-in-out infinite",
+              "fade-up": "fade-up .5s cubic-bezier(.2,.7,.2,1) both",
+              spinp: "spinp .7s linear infinite",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      html,
+      body {
+        overflow-x: hidden;
+      }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+      }
+      .font-display {
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      }
+      /* Solid card surface for the light theme */
+      .card {
+        background: #ffffff;
+        border: 1px solid #e6ebf3;
+      }
+      .field {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s,
+          background 0.2s;
+      }
+      .field:focus {
+        outline: none;
+        border-color: #0d9488;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.16);
+      }
+      .nav-item.is-active {
+        background: linear-gradient(135deg, #0d9488, #0f766e);
+        color: #fff;
+        box-shadow: 0 12px 26px -14px rgba(13, 148, 136, 0.8);
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen bg-canvas text-ink antialiased selection:bg-primary/20"
+  >
+    <!-- ============================ TOP HEADER / NAV ============================ -->
+    <header
+      class="sticky top-0 z-30 border-b border-slate-200 bg-white/85 backdrop-blur-xl"
+    >
+      <div
+        class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-700 text-white shadow-glow"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="h-6 w-6"
+            >
+              <path d="M12 3 2 8l10 5 10-5-10-5Z" fill="currentColor" />
+              <path
+                d="M6 11.5V16c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5v-4.5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="leading-tight">
+            <p class="font-display text-lg font-extrabold">Scholar</p>
+            <p class="hidden text-xs text-muted sm:block">
+              Student Management System
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div
+            class="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 sm:flex"
+          >
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary-700"
+              id="user-initials"
+              >–</span
+            >
+            <div class="leading-tight">
+              <p class="text-xs font-semibold" id="user-name">—</p>
+              <p
+                class="text-[10px] uppercase tracking-wide text-muted"
+                id="user-role"
+              >
+                —
+              </p>
+            </div>
+          </div>
+          <button
+            id="logout-btn"
+            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-ink transition hover:border-danger/40 hover:bg-danger/5 hover:text-danger"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="h-4 w-4"
+            >
+              <path
+                d="M15 12H4m0 0 3.5-3.5M4 12l3.5 3.5"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M10 5.5V5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-.5"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Global toast / confirmation region rendered by app.js -->
+    <div
+      id="toast-region"
+      class="pointer-events-none fixed inset-x-0 top-20 z-40 flex flex-col items-center gap-2 px-4"
+    ></div>
+
+    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      <!-- ============================ ADMIN VIEW ============================ -->
+      <section id="admin-view" class="hidden">
+        <div class="flex flex-col gap-6 lg:flex-row">
+          <!-- Sidebar / tab navigation -->
+          <aside class="lg:w-64 lg:shrink-0">
+            <nav
+              class="card flex gap-2 rounded-2xl p-2 shadow-soft lg:flex-col"
+              aria-label="Admin sections"
+            >
+              <button
+                data-nav-target="students-panel"
+                class="nav-item is-active flex flex-1 items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-ink transition hover:bg-slate-100 lg:flex-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="h-5 w-5"
+                >
+                  <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="16"
+                    rx="2.4"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                  <path
+                    d="M3 9h18M8 13h8M8 16.5h5"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <span>View Students</span>
+              </button>
+              <button
+                data-nav-target="add-panel"
+                class="nav-item flex flex-1 items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-ink transition hover:bg-slate-100 lg:flex-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="h-5 w-5"
+                >
+                  <circle
+                    cx="12"
+                    cy="8"
+                    r="3.4"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                  <path
+                    d="M5 19a7 7 0 0 1 12-4.9"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M18 15v6M15 18h6"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <span>Add Student</span>
+              </button>
+            </nav>
+          </aside>
+
+          <!-- Panels -->
+          <div class="min-w-0 flex-1">
+            <!-- ---------- Panel: Student Table ---------- -->
+            <div id="students-panel" data-panel class="animate-fade-up">
+              <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <h2 class="font-display text-2xl font-extrabold">
+                    Students
+                    <span
+                      id="students-count"
+                      class="ml-1 align-middle text-sm font-semibold text-muted"
+                    ></span>
+                  </h2>
+                  <p class="mt-1 text-sm text-muted">
+                    Manage every enrolled student record.
+                  </p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="relative">
+                    <span
+                      class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        class="h-4 w-4"
+                      >
+                        <circle
+                          cx="11"
+                          cy="11"
+                          r="7"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                        />
+                        <path
+                          d="m20 20-3-3"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                    </span>
+                    <input
+                      id="students-search"
+                      type="search"
+                      placeholder="Search students…"
+                      class="field w-44 rounded-xl py-2.5 pl-9 pr-3 text-sm text-ink placeholder:text-muted/60 sm:w-56"
+                    />
+                  </div>
+                  <button
+                    data-nav-target="add-panel"
+                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-700 px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:from-primary-500 hover:to-primary-700"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="h-4 w-4"
+                    >
+                      <path
+                        d="M12 5v14M5 12h14"
+                        stroke="currentColor"
+                        stroke-width="1.9"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    Add Student
+                  </button>
+                </div>
+              </div>
+
+              <div class="card overflow-hidden rounded-2xl shadow-soft">
+                <!-- Loading indicator -->
+                <div
+                  id="students-loading"
+                  class="hidden items-center justify-center gap-3 px-6 py-16 text-sm text-muted"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    class="h-5 w-5 animate-spinp text-primary"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      opacity=".25"
+                    />
+                    <path
+                      d="M21 12a9 9 0 0 0-9-9"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                  <span>Loading students…</span>
+                </div>
+
+                <!-- Error + retry -->
+                <div
+                  id="students-error"
+                  class="hidden flex-col items-center gap-3 px-6 py-16 text-center"
+                >
+                  <div
+                    class="flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="h-6 w-6"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                      />
+                      <path
+                        d="M12 7.5v5M12 16h.01"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </div>
+                  <p class="text-sm text-muted" id="students-error-text">
+                    We couldn't load the students.
+                  </p>
+                  <button
+                    id="students-retry"
+                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium transition hover:bg-slate-50"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="h-4 w-4"
+                    >
+                      <path
+                        d="M20 11a8 8 0 1 0-.6 4M20 5v6h-6"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    Retry
+                  </button>
+                </div>
+
+                <!-- Empty state -->
+                <div
+                  id="students-empty"
+                  class="hidden flex-col items-center gap-3 px-6 py-16 text-center"
+                >
+                  <div
+                    class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-muted"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="h-7 w-7"
+                    >
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="16"
+                        rx="2.4"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      />
+                      <path
+                        d="M3 9h18"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                  <p class="font-display text-base font-semibold">
+                    No students yet
+                  </p>
+                  <p class="max-w-xs text-sm text-muted">
+                    There are no student records to display. Add your first
+                    student to get started.
+                  </p>
+                </div>
+
+                <!-- Table wrapper -->
+                <div id="students-table-wrap" class="hidden overflow-x-auto">
+                  <table
+                    class="w-full min-w-[640px] border-collapse text-left text-sm"
+                  >
+                    <thead>
+                      <tr
+                        class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-muted"
+                      >
+                        <th scope="col" class="px-5 py-3.5 font-semibold">
+                          Name
+                        </th>
+                        <th scope="col" class="px-5 py-3.5 font-semibold">
+                          Course
+                        </th>
+                        <th scope="col" class="px-5 py-3.5 font-semibold">
+                          Mobile
+                        </th>
+                        <th scope="col" class="px-5 py-3.5 font-semibold">
+                          Email
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-5 py-3.5 text-right font-semibold"
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      id="students-tbody"
+                      class="divide-y divide-slate-100"
+                    ></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Row template used by app.js -->
+              <template id="student-row-template">
+                <tr
+                  class="group transition hover:bg-primary/5"
+                  data-student-row
+                >
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <span
+                        class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/12 text-xs font-semibold text-primary-700"
+                        data-cell="initials"
+                      ></span>
+                      <span
+                        class="font-medium text-ink"
+                        data-cell="name"
+                      ></span>
+                    </div>
+                  </td>
+                  <td class="px-5 py-4 text-muted" data-cell="course"></td>
+                  <td class="px-5 py-4 text-muted" data-cell="mobile"></td>
+                  <td class="px-5 py-4 text-muted" data-cell="email"></td>
+                  <td class="px-5 py-4">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        data-action="edit"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-ink transition hover:border-primary/50 hover:bg-primary/10 hover:text-primary-700"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          class="h-3.5 w-3.5"
+                        >
+                          <path
+                            d="M4 20h4L18.5 9.5a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4Z"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        Edit
+                      </button>
+                      <button
+                        data-action="delete"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-ink transition hover:border-danger/50 hover:bg-danger/10 hover:text-danger"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          class="h-3.5 w-3.5"
+                        >
+                          <path
+                            d="M5 7h14M10 7V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2m-7 0 .7 12a1 1 0 0 0 1 .9h4.6a1 1 0 0 0 1-.9L17 7"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </div>
+
+            <!-- ---------- Panel: Add Student Form ---------- -->
+            <div id="add-panel" data-panel class="hidden animate-fade-up">
+              <div class="mb-5">
+                <h2 class="font-display text-2xl font-extrabold">
+                  Add Student
+                </h2>
+                <p class="mt-1 text-sm text-muted">
+                  Create a new student record and login credentials.
+                </p>
+              </div>
+              <div class="card rounded-2xl p-6 shadow-soft sm:p-8">
+                <form
+                  id="add-student-form"
+                  novalidate
+                  class="grid grid-cols-1 gap-5 sm:grid-cols-2"
+                >
+                  <div class="sm:col-span-2">
+                    <label
+                      for="add-name"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Name</label
+                    >
+                    <input
+                      id="add-name"
+                      name="name"
+                      type="text"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="Full name"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="name"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="add-course"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Course</label
+                    >
+                    <input
+                      id="add-course"
+                      name="course"
+                      type="text"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="e.g. Computer Science"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="course"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="add-mobile"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Mobile</label
+                    >
+                    <input
+                      id="add-mobile"
+                      name="mobile"
+                      type="tel"
+                      inputmode="numeric"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="10-digit number"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="mobile"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="add-email"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Email</label
+                    >
+                    <input
+                      id="add-email"
+                      name="email"
+                      type="email"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="name@example.com"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="email"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="add-totalFees"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Total Fees</label
+                    >
+                    <input
+                      id="add-totalFees"
+                      name="totalFees"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="0.00"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="totalFees"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="add-paidFees"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Paid Fees</label
+                    >
+                    <input
+                      id="add-paidFees"
+                      name="paidFees"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="0.00"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="paidFees"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="add-username"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Username</label
+                    >
+                    <input
+                      id="add-username"
+                      name="username"
+                      type="text"
+                      autocomplete="off"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="4–30 characters"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="username"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="add-password"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Password</label
+                    >
+                    <input
+                      id="add-password"
+                      name="password"
+                      type="password"
+                      autocomplete="new-password"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="8–64 characters"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="password"
+                    ></p>
+                  </div>
+
+                  <div
+                    id="add-form-message"
+                    role="alert"
+                    class="sm:col-span-2 hidden rounded-xl px-4 py-3 text-sm"
+                  ></div>
+
+                  <div
+                    class="sm:col-span-2 flex items-center justify-end gap-3 pt-1"
+                  >
+                    <button
+                      type="button"
+                      data-nav-target="students-panel"
+                      class="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-ink transition hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      id="add-submit"
+                      type="submit"
+                      class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-700 px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:from-primary-500 hover:to-primary-700 focus:outline-none focus:ring-4 focus:ring-primary/30 disabled:opacity-70"
+                    >
+                      <svg
+                        id="add-spinner"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        class="hidden h-4 w-4 animate-spinp"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="9"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          opacity=".25"
+                        />
+                        <path
+                          d="M21 12a9 9 0 0 0-9-9"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                      <span>Create Student</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- ---------- Panel: Update Student Form ---------- -->
+            <div id="edit-panel" data-panel class="hidden animate-fade-up">
+              <div class="mb-5">
+                <h2 class="font-display text-2xl font-extrabold">
+                  Edit Student
+                </h2>
+                <p class="mt-1 text-sm text-muted">
+                  Update this student's record. Leave password blank to keep the
+                  current one.
+                </p>
+              </div>
+              <div class="card rounded-2xl p-6 shadow-soft sm:p-8">
+                <form
+                  id="edit-student-form"
+                  novalidate
+                  class="grid grid-cols-1 gap-5 sm:grid-cols-2"
+                >
+                  <input id="edit-id" type="hidden" />
+                  <div class="sm:col-span-2">
+                    <label
+                      for="edit-name"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Name</label
+                    >
+                    <input
+                      id="edit-name"
+                      name="name"
+                      type="text"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="Full name"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="name"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="edit-course"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Course</label
+                    >
+                    <input
+                      id="edit-course"
+                      name="course"
+                      type="text"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="e.g. Computer Science"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="course"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="edit-mobile"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Mobile</label
+                    >
+                    <input
+                      id="edit-mobile"
+                      name="mobile"
+                      type="tel"
+                      inputmode="numeric"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="10-digit number"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="mobile"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="edit-email"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Email</label
+                    >
+                    <input
+                      id="edit-email"
+                      name="email"
+                      type="email"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="name@example.com"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="email"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="edit-totalFees"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Total Fees</label
+                    >
+                    <input
+                      id="edit-totalFees"
+                      name="totalFees"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="0.00"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="totalFees"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="edit-paidFees"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Paid Fees</label
+                    >
+                    <input
+                      id="edit-paidFees"
+                      name="paidFees"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="0.00"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="paidFees"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="edit-username"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Username</label
+                    >
+                    <input
+                      id="edit-username"
+                      name="username"
+                      type="text"
+                      autocomplete="off"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="4–30 characters"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="username"
+                    ></p>
+                  </div>
+                  <div>
+                    <label
+                      for="edit-password"
+                      class="mb-1.5 block text-sm font-medium text-ink/80"
+                      >Password</label
+                    >
+                    <input
+                      id="edit-password"
+                      name="password"
+                      type="password"
+                      autocomplete="new-password"
+                      class="field w-full rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted/60"
+                      placeholder="Leave blank to keep current"
+                    />
+                    <p
+                      class="mt-1 hidden text-xs text-danger"
+                      data-error-for="password"
+                    ></p>
+                  </div>
+
+                  <div
+                    id="edit-form-message"
+                    role="alert"
+                    class="sm:col-span-2 hidden rounded-xl px-4 py-3 text-sm"
+                  ></div>
+
+                  <div
+                    class="sm:col-span-2 flex items-center justify-end gap-3 pt-1"
+                  >
+                    <button
+                      type="button"
+                      data-nav-target="students-panel"
+                      class="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-ink transition hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      id="edit-submit"
+                      type="submit"
+                      class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-700 px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:from-primary-500 hover:to-primary-700 focus:outline-none focus:ring-4 focus:ring-primary/30 disabled:opacity-70"
+                    >
+                      <svg
+                        id="edit-spinner"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        class="hidden h-4 w-4 animate-spinp"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="9"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          opacity=".25"
+                        />
+                        <path
+                          d="M21 12a9 9 0 0 0-9-9"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                      <span>Update</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ STUDENT VIEW ============================ -->
+      <section id="student-view" class="hidden">
+        <div class="mx-auto max-w-3xl animate-fade-up">
+          <!-- Loading indicator -->
+          <div
+            id="student-loading"
+            class="card hidden items-center justify-center gap-3 rounded-2xl px-6 py-20 text-sm text-muted shadow-soft"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="h-5 w-5 animate-spinp text-primary"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                stroke-width="3"
+                opacity=".25"
+              />
+              <path
+                d="M21 12a9 9 0 0 0-9-9"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span>Loading your details…</span>
+          </div>
+
+          <!-- Error -->
+          <div
+            id="student-error"
+            class="card hidden flex-col items-center gap-3 rounded-2xl px-6 py-20 text-center shadow-soft"
+          >
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                class="h-6 w-6"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+                <path
+                  d="M12 7.5v5M12 16h.01"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <p class="text-sm text-muted" id="student-error-text">
+              We couldn't load your details.
+            </p>
+          </div>
+
+          <!-- Read-only detail card -->
+          <div id="student-card" class="hidden">
+            <!-- Hero -->
+            <div
+              class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 p-7 text-white shadow-card sm:p-9"
+            >
+              <div
+                class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-3xl"
+              ></div>
+              <div
+                class="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left"
+              >
+                <span
+                  id="student-initials"
+                  class="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/15 text-2xl font-bold text-white ring-1 ring-white/25"
+                  >–</span
+                >
+                <div>
+                  <h2
+                    class="font-display text-2xl font-extrabold"
+                    data-field="name"
+                  >
+                    —
+                  </h2>
+                  <p
+                    class="mt-1 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm text-white/90"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="h-4 w-4"
+                    >
+                      <path d="M12 3 2 8l10 5 10-5-10-5Z" fill="currentColor" />
+                    </svg>
+                    <span data-field="course">—</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Contact details -->
+              <dl class="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+                  <dt class="text-xs uppercase tracking-wide text-white/70">
+                    Email
+                  </dt>
+                  <dd class="mt-1 break-all font-medium" data-field="email">
+                    —
+                  </dd>
+                </div>
+                <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+                  <dt class="text-xs uppercase tracking-wide text-white/70">
+                    Mobile
+                  </dt>
+                  <dd class="mt-1 font-medium" data-field="mobile">—</dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Fees summary -->
+            <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div class="card rounded-2xl p-5 shadow-soft">
+                <p class="text-xs uppercase tracking-wide text-muted">
+                  Total Fees
+                </p>
+                <p
+                  class="mt-2 font-display text-2xl font-bold"
+                  data-field="totalFees"
+                >
+                  —
+                </p>
+              </div>
+              <div class="card rounded-2xl p-5 shadow-soft">
+                <p class="text-xs uppercase tracking-wide text-muted">
+                  Paid Fees
+                </p>
+                <p
+                  class="mt-2 font-display text-2xl font-bold text-success"
+                  data-field="paidFees"
+                >
+                  —
+                </p>
+              </div>
+              <div
+                class="rounded-2xl bg-primary/8 p-5 shadow-soft ring-1 ring-primary/25"
+              >
+                <p class="text-xs uppercase tracking-wide text-muted">
+                  Outstanding Balance
+                </p>
+                <p
+                  class="mt-2 font-display text-2xl font-bold text-primary-700"
+                  data-field="balance"
+                >
+                  —
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Delete confirmation modal -->
+    <div
+      id="delete-modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4"
+    >
+      <div
+        id="delete-backdrop"
+        class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+      ></div>
+      <div
+        class="card relative w-full max-w-md rounded-2xl p-6 shadow-card sm:p-7"
+      >
+        <div
+          class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            class="h-6 w-6"
+          >
+            <path
+              d="M5 7h14M10 7V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2m-7 0 .7 12a1 1 0 0 0 1 .9h4.6a1 1 0 0 0 1-.9L17 7"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <h3 class="font-display text-lg font-semibold">Delete student?</h3>
+        <p class="mt-1 text-sm text-muted">
+          You are about to permanently delete
+          <span id="delete-target-name" class="font-medium text-ink"
+            >this student</span
+          >. This action cannot be undone.
+        </p>
+        <div class="mt-6 flex items-center justify-end gap-3">
+          <button
+            id="delete-cancel"
+            class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-ink transition hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+          <button
+            id="delete-confirm"
+            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-danger to-rose-600 px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
+          >
+            <svg
+              id="delete-spinner"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="hidden h-4 w-4 animate-spinp"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                stroke-width="3"
+                opacity=".25"
+              />
+              <path
+                d="M21 12a9 9 0 0 0-9-9"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+            </svg>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

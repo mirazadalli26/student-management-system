@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scholar &middot; Sign in</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Shared design system: palette + type. Keep IDENTICAL across login.html and dashboard.html. -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              canvas: "#eef2f8", // app background (light)
+              surface: "#ffffff", // cards / panels
+              primary: {
+                DEFAULT: "#0d9488",
+                50: "#f0fdfa",
+                100: "#ccfbf1",
+                200: "#99f6e4",
+                300: "#5eead4",
+                400: "#2dd4bf",
+                500: "#14b8a6",
+                600: "#0d9488",
+                700: "#0f766e",
+                800: "#115e59",
+                900: "#134e4a",
+              },
+              accent: "#f59e0b", // warm secondary accent
+              ink: "#0f172a", // primary text on light
+              muted: "#64748b", // secondary text
+              danger: "#e11d48",
+              success: "#16a34a",
+            },
+            fontFamily: {
+              display: [
+                "Plus Jakarta Sans",
+                "ui-sans-serif",
+                "system-ui",
+                "sans-serif",
+              ],
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 16px 40px -14px rgba(13,148,136,0.55)",
+              card: "0 10px 40px -14px rgba(15,23,42,0.16)",
+              soft: "0 1px 2px rgba(15,23,42,0.06), 0 10px 30px -18px rgba(15,23,42,0.25)",
+            },
+            keyframes: {
+              float: {
+                "0%,100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-12px)" },
+              },
+              drift: {
+                "0%,100%": { transform: "translate(0,0) scale(1)" },
+                "50%": { transform: "translate(26px,-18px) scale(1.06)" },
+              },
+              "fade-up": {
+                "0%": { opacity: 0, transform: "translateY(16px)" },
+                "100%": { opacity: 1, transform: "translateY(0)" },
+              },
+              spinp: { to: { transform: "rotate(360deg)" } },
+            },
+            animation: {
+              float: "float 7s ease-in-out infinite",
+              drift: "drift 16s ease-in-out infinite",
+              "fade-up": "fade-up .6s cubic-bezier(.2,.7,.2,1) both",
+              spinp: "spinp .7s linear infinite",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      html,
+      body {
+        overflow-x: hidden;
+      }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+      }
+      .font-display {
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      }
+      /* Input styling for the light theme */
+      .field {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s,
+          background 0.2s;
+      }
+      .field:focus {
+        outline: none;
+        border-color: #0d9488;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.16);
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen bg-canvas text-ink antialiased selection:bg-primary/20"
+  >
+    <main class="grid min-h-screen grid-cols-1 lg:grid-cols-2">
+      <!-- ============================ LEFT — BRAND PANEL ============================ -->
+      <section
+        class="relative hidden overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 p-12 text-white lg:flex lg:flex-col lg:justify-between"
+      >
+        <!-- decorative glows -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            class="absolute -left-16 top-10 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-drift"
+          ></div>
+          <div
+            class="absolute -right-10 bottom-0 h-80 w-80 rounded-full bg-accent/20 blur-3xl animate-drift"
+            style="animation-delay: -6s"
+          ></div>
+          <div
+            class="absolute inset-0 bg-[radial-gradient(600px_300px_at_20%_10%,rgba(255,255,255,0.14),transparent)]"
+          ></div>
+        </div>
+
+        <!-- brand mark -->
+        <div class="relative flex items-center gap-3">
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/25 backdrop-blur"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="h-6 w-6"
+            >
+              <path d="M12 3 2 8l10 5 10-5-10-5Z" fill="currentColor" />
+              <path
+                d="M6 11.5V16c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5v-4.5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <span class="font-display text-xl font-extrabold tracking-tight"
+            >Scholar</span
+          >
+        </div>
+
+        <!-- headline + highlights -->
+        <div class="relative max-w-md">
+          <h2 class="font-display text-4xl font-extrabold leading-tight">
+            Manage your students with clarity.
+          </h2>
+          <p class="mt-4 text-white/80">
+            One calm workspace for enrollment, records, and fees — built for
+            administrators and students alike.
+          </p>
+
+          <ul class="mt-8 space-y-4 text-sm text-white/90">
+            <li class="flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/20"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="h-4 w-4"
+                >
+                  <path
+                    d="M20 6 9 17l-5-5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              Fast, searchable student directory
+            </li>
+            <li class="flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/20"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="h-4 w-4"
+                >
+                  <path
+                    d="M20 6 9 17l-5-5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              Real-time fees and balance tracking
+            </li>
+            <li class="flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/20"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="h-4 w-4"
+                >
+                  <path
+                    d="M20 6 9 17l-5-5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              Secure role-based access
+            </li>
+          </ul>
+        </div>
+
+        <p class="relative text-xs text-white/60">
+          &copy; Scholar Student Management System
+        </p>
+      </section>
+
+      <!-- ============================ RIGHT — SIGN IN FORM ============================ -->
+      <section class="flex items-center justify-center px-5 py-10 sm:px-8">
+        <div class="w-full max-w-md animate-fade-up">
+          <!-- compact brand for mobile -->
+          <div class="mb-8 flex items-center gap-3 lg:hidden">
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-700 text-white shadow-glow"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                class="h-6 w-6"
+              >
+                <path d="M12 3 2 8l10 5 10-5-10-5Z" fill="currentColor" />
+                <path
+                  d="M6 11.5V16c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5v-4.5"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <span class="font-display text-xl font-extrabold">Scholar</span>
+          </div>
+
+          <header class="mb-7">
+            <h1 class="font-display text-3xl font-extrabold tracking-tight">
+              Welcome back
+            </h1>
+            <p class="mt-2 text-sm text-muted">
+              Sign in to continue to your dashboard.
+            </p>
+          </header>
+
+          <!-- Error / alert message area — hidden by default, wired by app.js -->
+          <div
+            id="login-error"
+            role="alert"
+            class="mb-5 hidden items-start gap-2 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="mt-0.5 h-4 w-4 shrink-0"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+              <path
+                d="M12 7.5v5M12 16h.01"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span id="login-error-text">Something went wrong.</span>
+          </div>
+
+          <!-- Login form -->
+          <form id="login-form" novalidate class="space-y-5">
+            <div>
+              <label
+                for="login-username"
+                class="mb-1.5 block text-sm font-medium text-ink/80"
+                >Username</label
+              >
+              <div class="relative">
+                <span
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    class="h-5 w-5"
+                  >
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="3.4"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                    <path
+                      d="M5 19a7 7 0 0 1 14 0"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </span>
+                <input
+                  id="login-username"
+                  name="username"
+                  type="text"
+                  autocomplete="username"
+                  placeholder="e.g. admin"
+                  class="field w-full rounded-xl py-3 pl-11 pr-4 text-sm text-ink placeholder:text-muted/60"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="login-password"
+                class="mb-1.5 block text-sm font-medium text-ink/80"
+                >Password</label
+              >
+              <div class="relative">
+                <span
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    class="h-5 w-5"
+                  >
+                    <rect
+                      x="4.5"
+                      y="10"
+                      width="15"
+                      height="10"
+                      rx="2.4"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                    <path
+                      d="M8 10V7.5a4 4 0 0 1 8 0V10"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                  </svg>
+                </span>
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="••••••••"
+                  class="field w-full rounded-xl py-3 pl-11 pr-12 text-sm text-ink placeholder:text-muted/60"
+                />
+                <button
+                  type="button"
+                  id="toggle-password"
+                  aria-label="Show password"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted transition hover:text-ink"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    class="h-5 w-5"
+                  >
+                    <path
+                      d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <button
+              id="login-submit"
+              type="submit"
+              class="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-700 py-3 text-sm font-semibold text-white shadow-glow transition hover:from-primary-500 hover:to-primary-700 focus:outline-none focus:ring-4 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <svg
+                id="login-spinner"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                class="hidden h-4 w-4 animate-spinp text-white"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  opacity=".25"
+                />
+                <path
+                  d="M21 12a9 9 0 0 0-9-9"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span id="login-submit-label">Sign in</span>
+            </button>
+          </form>
+
+          <p class="mt-8 text-center text-xs text-muted">
+            Protected area &middot; authorized users only
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

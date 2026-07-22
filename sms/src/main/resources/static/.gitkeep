@@ -1,0 +1,2 @@
+# Static frontend assets (login.html, dashboard.html, app.js, styles) are served
+# from this directory by Spring Boot. Frontend files are added in later tasks.
